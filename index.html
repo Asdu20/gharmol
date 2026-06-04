@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GharMol — House Price Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161923;
+      --surface2: #1e2330;
+      --border: rgba(255,255,255,0.07);
+      --accent: #c8f06a;
+      --accent-dim: #a8d54a;
+      --text: #f0f2f7;
+      --muted: #7a8299;
+      --danger: #ff6b6b;
+      --info: #6bceff;
+      --radius: 14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    header {
+      padding: 2rem 2.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface);
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .badge {
+      font-size: 0.7rem;
+      background: rgba(200,240,106,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(200,240,106,0.25);
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 4rem;
+    }
+
+    .hero {
+      margin-bottom: 2.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.75rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 3px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .field { margin-bottom: 1.1rem; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: 'DM Sans', sans-serif;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+
+    input[type="number"]:focus,
+    select:focus { border-color: var(--accent); }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%237a8299' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    select option { background: #1e2330; }
+
+    .amenities-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .toggle:hover { border-color: rgba(200,240,106,0.3); }
+
+    .toggle.active {
+      background: rgba(200,240,106,0.08);
+      border-color: rgba(200,240,106,0.4);
+    }
+
+    .toggle input { display: none; }
+
+    .toggle-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--muted);
+      flex-shrink: 0;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .toggle.active .toggle-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .toggle.active .toggle-dot::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #0d0f14;
+      border-radius: 50%;
+    }
+
+    .toggle-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .toggle.active .toggle-label { color: var(--text); }
+
+    .predict-btn {
+      width: 100%;
+      margin-top: 1.5rem;
+      background: var(--accent);
+      color: #0d0f14;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .predict-btn:hover { background: var(--accent-dim); transform: translateY(-1px); }
+    .predict-btn:active { transform: translateY(0); }
+    .predict-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Result panel */
+    #result-panel {
+      display: none;
+      margin-top: 2rem;
+    }
+
+    #result-panel.visible { display: block; }
+
+    .result-card {
+      background: linear-gradient(135deg, rgba(200,240,106,0.08) 0%, transparent 60%), var(--surface);
+      border: 1px solid rgba(200,240,106,0.2);
+      border-radius: var(--radius);
+      padding: 2rem;
+    }
+
+    .result-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .price-main small {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .price-main .amount {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .price-main .unit {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .range-box {
+      text-align: right;
+    }
+
+    .range-box small {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .range-values {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 1.5rem 0;
+    }
+
+    .breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .breakdown-item {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .breakdown-item .bk-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .breakdown-item .bk-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .error-msg {
+      background: rgba(255,107,107,0.1);
+      border: 1px solid rgba(255,107,107,0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: var(--danger);
+      font-size: 0.9rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .spinner {
+      display: none;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(13,15,20,0.3);
+      border-top-color: #0d0f14;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ghar<span>Mol</span></div>
+  <div class="badge">AI POWERED</div>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>Apne ghar ki<br/><em>sahi kimat</em> jaano</h1>
+    <p>Location, amenities aur size ke basis pe turant estimate pao. Bilkul free.</p>
+  </div>
+
+  <div class="grid">
+    <!-- Left column -->
+    <div>
+      <!-- Basic details -->
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="section-title">Ghar ki details</div>
+
+        <div class="field">
+          <label>Bedrooms</label>
+          <select id="bedrooms">
+            <option value="1">1 BHK</option>
+            <option value="2" selected>2 BHK</option>
+            <option value="3">3 BHK</option>
+            <option value="4">4 BHK</option>
+            <option value="5">5+ BHK</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Bathrooms</label>
+          <select id="bathrooms">
+            <option value="1">1 Bathroom</option>
+            <option value="2" selected>2 Bathrooms</option>
+            <option value="3">3 Bathrooms</option>
+            <option value="4">4 Bathrooms</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Area (square feet)</label>
+          <input type="number" id="sqft" value="1000" min="200" max="10000" placeholder="e.g. 1200" />
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="card">
+        <div class="section-title">Location</div>
+
+        <div class="field">
+          <label>City</label>
+          <select id="city">
+            <option value="mumbai">Mumbai</option>
+            <option value="delhi">Delhi / NCR</option>
+            <option value="bangalore" selected>Bangalore</option>
+            <option value="hyderabad">Hyderabad</option>
+            <option value="pune">Pune</option>
+            <option value="chennai">Chennai</option>
+            <option value="kolkata">Kolkata</option>
+            <option value="jaipur">Jaipur</option>
+            <option value="lucknow">Lucknow</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Locality Type</label>
+          <select id="locality">
+            <option value="prime">Prime / Luxury area</option>
+            <option value="central" selected>Central / Popular area</option>
+            <option value="suburban">Suburban</option>
+            <option value="outskirts">Outskirts / Upcoming area</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <div>
+      <!-- Amenities -->
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="section-title">Amenities</div>
+        <div class="amenities-grid">
+          <label class="toggle" onclick="toggleAmenity(this)">
+            <input type="checkbox" id="parking" />
+            <div class="toggle-dot"></div>
+            <span class="toggle-label">🚗 Parking</span>
+          </label>
+          <label class="toggle" onclick="toggleAmenity(this)">
+            <input type="checkbox" id="gym" />
+            <div class="toggle-dot"></div>
+            <span class="toggle-label">💪 Gym</span>
+          </label>
+          <label class="toggle" onclick="toggleAmenity(this)">
+            <input type="checkbox" id="pool" />
+            <div class="toggle-dot"></div>
+            <span class="toggle-label">🏊 Pool</span>
+          </label>
+          <label class="toggle" onclick="toggleAmenity(this)">
+            <input type="checkbox" id="security" />
+            <div class="toggle-dot"></div>
+            <span class="toggle-label">🔒 Security</span>
+          </label>
+          <label class="toggle" onclick="toggleAmenity(this)">
+            <input type="checkbox" id="lift" />
+            <div class="toggle-dot"></div>
+            <span class="toggle-label">🛗 Lift</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Predict button -->
+      <button class="predict-btn" onclick="predict()" id="predict-btn">
+        <span id="btn-text">Kimat Calculate Karo</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+
+      <div class="error-msg" id="error-msg"></div>
+    </div>
+  </div>
+
+  <!-- Result panel -->
+  <div id="result-panel">
+    <div class="result-card">
+      <div class="result-top">
+        <div class="price-main">
+          <small>Estimated Market Price</small>
+          <div class="amount" id="res-price">₹0</div>
+          <div class="unit">Lakhs</div>
+        </div>
+        <div class="range-box">
+          <small>Price Range</small>
+          <div class="range-values" id="res-range">—</div>
+          <div style="font-size:0.75rem; color: var(--muted); margin-top: 3px;">±12% estimate</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title" style="margin-bottom: 1rem;">Price Breakdown</div>
+      <div class="breakdown-grid">
+        <div class="breakdown-item">
+          <div class="bk-label">Price / sqft</div>
+          <div class="bk-val" id="bd-psqft">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="bk-label">City Factor</div>
+          <div class="bk-val" id="bd-city">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="bk-label">Locality Factor</div>
+          <div class="bk-val" id="bd-locality">—</div>
+        </div>
+        <div class="breakdown-item">
+          <div class="bk-label">Amenity Bonus</div>
+          <div class="bk-val" id="bd-amenity">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function toggleAmenity(el) {
+  const cb = el.querySelector('input[type="checkbox"]');
+  cb.checked = !cb.checked;
+  el.classList.toggle('active', cb.checked);
+}
+
+async function predict() {
+  const btn = document.getElementById('predict-btn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btn-text');
+  const errMsg = document.getElementById('error-msg');
+
+  const sqft = parseFloat(document.getElementById('sqft').value);
+  if (!sqft || sqft < 100) {
+    errMsg.textContent = "Please enter a valid area (min 100 sqft)";
+    errMsg.style.display = 'block';
+    return;
+  }
+  errMsg.style.display = 'none';
+
+  btn.disabled = true;
+  btnText.style.display = 'none';
+  spinner.style.display = 'block';
+
+  const payload = {
+    bedrooms: parseInt(document.getElementById('bedrooms').value),
+    bathrooms: parseInt(document.getElementById('bathrooms').value),
+    sqft: sqft,
+    city: document.getElementById('city').value,
+    locality_tier: document.getElementById('locality').value,
+    parking: document.getElementById('parking').checked,
+    gym: document.getElementById('gym').checked,
+    pool: document.getElementById('pool').checked,
+    security: document.getElementById('security').checked,
+    lift: document.getElementById('lift').checked,
+  };
+
+  try {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error('Server error');
+    const data = await res.json();
+
+    document.getElementById('res-price').textContent = '₹' + data.predicted_price.toFixed(2);
+    document.getElementById('res-range').textContent =
+      '₹' + data.price_range_low.toFixed(1) + ' – ₹' + data.price_range_high.toFixed(1) + ' L';
+    document.getElementById('bd-psqft').textContent = '₹' + data.price_per_sqft.toLocaleString();
+    document.getElementById('bd-city').textContent = 'x' + data.breakdown.city_factor;
+    document.getElementById('bd-locality').textContent = 'x' + data.breakdown.locality_factor;
+    document.getElementById('bd-amenity').textContent = 'x' + data.breakdown.amenity_bonus;
+
+    const panel = document.getElementById('result-panel');
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch (e) {
+    errMsg.textContent = 'Prediction failed. Please check if the server is running.';
+    errMsg.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btnText.style.display = 'block';
+    spinner.style.display = 'none';
+  }
+}
+</script>
+
+</body>
+</html>
