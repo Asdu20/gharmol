@@ -24,13 +24,17 @@ def load_bundle():
     with open(MODEL_PATH, "rb") as f:
         return pickle.load(f)
 
-bundle   = load_bundle()
-model    = bundle["model"]
-le_city  = bundle["le_city"]
-le_loc   = bundle["le_loc"]
-FEATURES = bundle["features"]
-CITIES   = bundle["cities"]
-LOCALITIES = bundle["localities"]
+try:
+    bundle = load_bundle()
+    model = bundle["model"]
+    le_city = bundle["le_city"]
+    le_loc = bundle["le_loc"]
+    FEATURES = bundle["features"]
+    CITIES = bundle["cities"]
+    LOCALITIES = bundle["localities"]
+except Exception as e:
+    print("MODEL LOAD ERROR:", str(e))
+    raise e
 
 
 class HouseFeatures(BaseModel):
