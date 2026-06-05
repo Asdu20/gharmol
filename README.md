@@ -1,77 +1,42 @@
 # GharMol — House Price Predictor
 
-FastAPI-based house price prediction app with location + amenities support.
+A Machine Learning based House Price Prediction Web Application developed by **Mohd Asdaf Ansari**.
+
+## Live Demo
+
+https://gharmol-8h8b.onrender.com
+
+## Developer
+
+* Name: Mohd Asdaf Ansari
+* GitHub: https://github.com/Asdu20
+* LinkedIn: https://www.linkedin.com/in/mohdasdafansari
+
+## Project Overview
+
+GharMol is a web application that predicts house prices based on property details such as city, locality tier, area, bedrooms, bathrooms, and amenities.
+
+The application is built using:
+
+* FastAPI
+* Python
+* Scikit-Learn
+* HTML/CSS/JavaScript
+* Render (Deployment)
 
 ## Features
-- City-wise pricing (Mumbai, Delhi, Bangalore, etc.)
-- Locality tier (Prime, Central, Suburban, Outskirts)
-- Amenities: Parking, Gym, Pool, Security, Lift
-- Price range estimate (±12%)
-- Detailed breakdown
 
-## Setup & Run
+* House Price Prediction
+* City-wise Pricing
+* Locality Tier Support
+* Amenities Based Adjustment
+* Live Web Deployment
+* REST API Backend
 
-### Step 1 — Install dependencies
-```bash
-pip install -r requirements.txt
-```
+## Project Status
 
-### Step 2 — Run the server
-```bash
-python main.py
-```
+Successfully deployed and accessible online.
 
-### Step 3 — Open in browser
-```
-http://localhost:8000
-```
+## Author
 
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Frontend UI |
-| POST | `/predict` | Get price prediction |
-| GET | `/cities` | List of supported cities |
-| GET | `/health` | Server health check |
-
-## Predict API Example
-
-**POST /predict**
-
-```json
-{
-  "bedrooms": 3,
-  "bathrooms": 2,
-  "sqft": 1200,
-  "city": "bangalore",
-  "locality_tier": "central",
-  "parking": true,
-  "gym": false,
-  "pool": false,
-  "security": true,
-  "lift": true
-}
-```
-
-**Response:**
-```json
-{
-  "predicted_price": 98.5,
-  "price_per_sqft": 8210,
-  "price_range_low": 86.7,
-  "price_range_high": 110.3,
-  "breakdown": {
-    "city_factor": 1.8,
-    "locality_factor": 1.3,
-    "amenity_bonus": 1.1
-  }
-}
-```
-
-## Deploy on Render
-
-1. Upload code to GitHub
-2. Create new Web Service on Render
-3. Set build command: `pip install -r requirements.txt`
-4. Set start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+Developed and deployed by Mohd Asdaf Ansari.
